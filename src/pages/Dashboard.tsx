@@ -2,6 +2,8 @@ import { SensorCard } from "@/components/SensorCard";
 import { BuoyStatus } from "@/components/BuoyStatus";
 import { MetricChart } from "@/components/MetricChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { 
   Thermometer, 
   Droplets, 
@@ -10,11 +12,14 @@ import {
   Gauge, 
   Activity,
   TrendingUp,
-  AlertTriangle 
+  AlertTriangle,
+  MapPin,
+  Zap,
+  Shield,
+  Database
 } from "lucide-react";
-import oceanHero from "@/assets/ocean-buoys-hero.jpg";
 
-// Mock data for demonstration
+// Enhanced mock data
 const sensorData = [
   { title: "Avg Temperature", value: "22.5", unit: "°C", status: "online" as const, icon: Thermometer, trend: "up" as const, trendValue: "+0.3°" },
   { title: "Humidity", value: "68", unit: "%", status: "online" as const, icon: Droplets, trend: "stable" as const, trendValue: "±2%" },
@@ -75,49 +80,84 @@ const waveData = [
   { time: "20:00", value: 1.6 },
 ];
 
+const systemStats = [
+  { label: "Data Points Collected", value: "2.4M", icon: Database, color: "text-blue-400" },
+  { label: "Active Connections", value: "12", icon: Zap, color: "text-emerald-400" },
+  { label: "Security Status", value: "Secure", icon: Shield, color: "text-green-400" },
+  { label: "Uptime", value: "99.9%", icon: Activity, color: "text-purple-400" },
+];
+
 export default function Dashboard() {
   const handleInspectBuoy = (buoyId: string) => {
     console.log("Inspecting buoy:", buoyId);
-    // Navigate to detailed buoy view
   };
 
   return (
-    <div className="space-y-6">
-      {/* Hero Section */}
-      <div className="relative rounded-lg overflow-hidden h-48">
-        <img 
-          src={oceanHero} 
-          alt="Ocean Buoys" 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-ocean-deep/80 to-transparent flex items-center">
-          <div className="p-6">
-            <h1 className="text-3xl font-bold text-white mb-2">Ocean Monitoring Dashboard</h1>
-            <p className="text-blue-100">Real-time data from 12 active buoys across the marine network</p>
+    <div className="space-y-8">
+      {/* Enhanced Hero Section */}
+      <div className="relative rounded-xl overflow-hidden h-56 bg-gradient-wave">
+        <div className="absolute inset-0 bg-gradient-to-r from-ocean-deep/60 to-transparent flex items-center">
+          <div className="p-8">
+            <h1 className="text-4xl font-bold text-white mb-3 slide-in">Ocean Monitoring Dashboard</h1>
+            <p className="text-blue-100 text-lg slide-in">Real-time data from 12 active buoys across the marine network</p>
+            <div className="flex gap-4 mt-4">
+              <Button variant="marine" className="btn-enhanced">
+                <MapPin className="h-4 w-4 mr-2" />
+                View Map
+              </Button>
+              <Button variant="outline" className="btn-enhanced text-white border-white hover:bg-white/10">
+                Generate Report
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Alert Banner */}
-      <Card className="border-l-4 border-l-warning bg-warning/5">
+      {/* Enhanced Alert Banner */}
+      <Card className="alert-enhanced alert-warning">
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
-            <AlertTriangle className="h-5 w-5 text-warning" />
-            <div>
+            <AlertTriangle className="h-5 w-5 text-warning pulse-glow" />
+            <div className="flex-1">
               <p className="font-semibold text-warning">Weather Alert</p>
               <p className="text-sm text-muted-foreground">High wave conditions detected in sectors 7-9. Monitor buoy stability.</p>
             </div>
+            <Button size="sm" variant="outline">
+              View Details
+            </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Sensor Overview */}
+      {/* Enhanced System Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 enhanced-grid">
+        {systemStats.map((stat, index) => (
+          <Card key={index} className="metric-card interactive-element">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                </div>
+                <stat.icon className={`h-8 w-8 ${stat.color}`} />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Enhanced Sensor Overview */}
       <div>
-        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-          <TrendingUp className="h-6 w-6 text-primary" />
-          Sensor Overview
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <TrendingUp className="h-6 w-6 text-primary" />
+            Sensor Overview
+          </h2>
+          <Badge variant="outline" className="text-lg px-4 py-2">
+            6 Active Sensors
+          </Badge>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 enhanced-grid">
           {sensorData.map((sensor, index) => (
             <SensorCard
               key={index}
@@ -133,8 +173,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Enhanced Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <MetricChart
           title="Temperature Trends (24h)"
           data={temperatureData}
@@ -151,13 +191,26 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Buoy Status */}
+      {/* Enhanced Buoy Status */}
       <div>
-        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-          <Waves className="h-6 w-6 text-primary" />
-          Buoy Network Status
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Waves className="h-6 w-6 text-primary wave-animation" />
+            Buoy Network Status
+          </h2>
+          <div className="flex gap-2">
+            <Badge variant="default" className="bg-emerald-500/20 text-emerald-400">
+              2 Online
+            </Badge>
+            <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-400">
+              1 Warning
+            </Badge>
+            <Badge variant="destructive" className="bg-red-500/20 text-red-400">
+              1 Offline
+            </Badge>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 enhanced-grid">
           {buoyData.map((buoy) => (
             <BuoyStatus
               key={buoy.id}

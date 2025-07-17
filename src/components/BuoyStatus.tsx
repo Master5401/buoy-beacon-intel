@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Wifi, Battery, Signal } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { MapPin, Wifi, Battery, Signal, Activity, Thermometer, Waves, Wind } from "lucide-react";
 
 interface BuoyData {
   id: string;
@@ -33,13 +34,27 @@ export function BuoyStatus({ buoy, onInspect }: BuoyStatusProps) {
 
   const config = statusConfig[buoy.status];
 
+  const getBatteryColor = (level: number) => {
+    if (level > 60) return "bg-emerald-500";
+    if (level > 30) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
+  const getSignalColor = (level: number) => {
+    if (level > 70) return "bg-emerald-500";
+    if (level > 40) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
   return (
-    <Card className="ocean-card hover:shadow-wave transition-all duration-300">
+    <Card className="ocean-card interactive-element group">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">{buoy.name}</CardTitle>
+          <CardTitle className="text-lg group-hover:text-primary transition-colors">
+            {buoy.name}
+          </CardTitle>
           <Badge variant={config.variant} className="font-semibold">
-            <div className={`w-2 h-2 rounded-full ${config.color} mr-2 animate-pulse`} />
+            <div className={`w-2 h-2 rounded-full ${config.color} mr-2 ${buoy.status === 'online' ? 'pulse-glow' : ''}`} />
             {config.text}
           </Badge>
         </div>
@@ -50,69 +65,77 @@ export function BuoyStatus({ buoy, onInspect }: BuoyStatusProps) {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* System Health */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex items-center gap-2">
-            <Battery className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">{buoy.battery}%</span>
-            <div className="flex-1 bg-muted rounded-full h-2">
-              <div 
-                className={`h-2 rounded-full transition-all ${
-                  buoy.battery > 60 ? 'bg-emerald-500' : 
-                  buoy.battery > 30 ? 'bg-yellow-500' : 'bg-red-500'
-                }`}
-                style={{ width: `${buoy.battery}%` }}
-              />
+        {/* Enhanced System Health */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Battery className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium">Battery</span>
             </div>
+            <span className="text-sm font-bold">{buoy.battery}%</span>
+          </div>
+          <Progress value={buoy.battery} className="h-2" />
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Signal className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium">Signal</span>
+            </div>
+            <span className="text-sm font-bold">{buoy.signal}%</span>
+          </div>
+          <Progress value={buoy.signal} className="h-2" />
+        </div>
+
+        {/* Enhanced Sensor Readings */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-2 mb-1">
+              <Thermometer className="h-4 w-4 text-blue-400" />
+              <span className="text-xs text-muted-foreground">Temperature</span>
+            </div>
+            <span className="text-lg font-bold text-foreground">{buoy.sensors.temperature}°C</span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Signal className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">{buoy.signal}%</span>
-            <div className="flex-1 bg-muted rounded-full h-2">
-              <div 
-                className={`h-2 rounded-full transition-all ${
-                  buoy.signal > 60 ? 'bg-emerald-500' : 
-                  buoy.signal > 30 ? 'bg-yellow-500' : 'bg-red-500'
-                }`}
-                style={{ width: `${buoy.signal}%` }}
-              />
+          <div className="p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-2 mb-1">
+              <Activity className="h-4 w-4 text-green-400" />
+              <span className="text-xs text-muted-foreground">Humidity</span>
             </div>
+            <span className="text-lg font-bold text-foreground">{buoy.sensors.humidity}%</span>
+          </div>
+
+          <div className="p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-2 mb-1">
+              <Waves className="h-4 w-4 text-cyan-400" />
+              <span className="text-xs text-muted-foreground">Wave Height</span>
+            </div>
+            <span className="text-lg font-bold text-foreground">{buoy.sensors.waveHeight}m</span>
+          </div>
+
+          <div className="p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+            <div className="flex items-center gap-2 mb-1">
+              <Wind className="h-4 w-4 text-purple-400" />
+              <span className="text-xs text-muted-foreground">Wind Speed</span>
+            </div>
+            <span className="text-lg font-bold text-foreground">{buoy.sensors.windSpeed} km/h</span>
           </div>
         </div>
 
-        {/* Sensor Readings */}
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div>
-            <span className="text-muted-foreground">Temp:</span>
-            <span className="ml-1 font-semibold">{buoy.sensors.temperature}°C</span>
+        {/* Enhanced Actions */}
+        <div className="flex justify-between items-center pt-3 border-t border-border">
+          <div className="text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-primary pulse-glow" />
+              Updated: {buoy.lastUpdate}
+            </div>
           </div>
-          <div>
-            <span className="text-muted-foreground">Humidity:</span>
-            <span className="ml-1 font-semibold">{buoy.sensors.humidity}%</span>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Wave:</span>
-            <span className="ml-1 font-semibold">{buoy.sensors.waveHeight}m</span>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Wind:</span>
-            <span className="ml-1 font-semibold">{buoy.sensors.windSpeed} km/h</span>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-between items-center pt-2 border-t border-border/50">
-          <span className="text-xs text-muted-foreground">
-            Updated: {buoy.lastUpdate}
-          </span>
           <Button 
             size="sm" 
             variant="marine"
             onClick={() => onInspect(buoy.id)}
-            className="hover:scale-105 transition-all duration-300"
+            className="btn-enhanced hover-scale"
           >
-            Inspect
+            Inspect Details
           </Button>
         </div>
       </CardContent>
