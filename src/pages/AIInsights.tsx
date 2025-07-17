@@ -158,7 +158,7 @@ export default function AIInsights() {
                     <p className="text-sm text-muted-foreground">{insight.action}</p>
                   </div>
                   
-                  <Button size="sm" variant="outline" className="w-full">
+                  <Button size="sm" variant="marine" className="w-full">
                     View Details
                   </Button>
                 </CardContent>

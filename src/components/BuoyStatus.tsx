@@ -108,9 +108,9 @@ export function BuoyStatus({ buoy, onInspect }: BuoyStatusProps) {
           </span>
           <Button 
             size="sm" 
-            variant="outline"
+            variant="marine"
             onClick={() => onInspect(buoy.id)}
-            className="hover:bg-primary/10"
+            className="hover:scale-105 transition-all duration-300"
           >
             Inspect
           </Button>

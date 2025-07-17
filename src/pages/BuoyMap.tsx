@@ -194,7 +194,7 @@ export default function BuoyMap() {
                 </div>
               </div>
 
-              <Button className="w-full" variant="outline">
+              <Button className="w-full" variant="ocean">
                 View Detailed Analytics
               </Button>
             </CardContent>
