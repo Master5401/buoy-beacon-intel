@@ -1,43 +1,66 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { MapPin, Satellite, Navigation, Anchor, Waves, Thermometer, Activity, Wind, Droplets, Battery, Signal } from "lucide-react";
 
-// Enhanced mock map component
 const EnhancedMap = () => {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   const [selectedBuoy, setSelectedBuoy] = useState<string | null>(null);
-  
-  const buoys = [
-    { id: "BOY-001", name: "Atlantic Pioneer", lat: 40.7, lng: -74.0, status: "online", temp: 23.1, wave: 1.9, battery: 87 },
-    { id: "BOY-002", name: "Pacific Guardian", lat: 34.0, lng: -118.2, status: "warning", temp: 21.8, wave: 2.8, battery: 45 },
-    { id: "BOY-003", name: "Arctic Sentinel", lat: 71.0, lng: -8.2, status: "offline", temp: 18.5, wave: 0.8, battery: 12 },
-    { id: "BOY-004", name: "Gulf Monitor", lat: 29.7, lng: -95.3, status: "online", temp: 26.2, wave: 1.5, battery: 91 },
-    { id: "BOY-005", name: "Baltic Watcher", lat: 59.3, lng: 18.0, status: "online", temp: 19.7, wave: 1.2, battery: 73 },
-  ];
+
+const buoys = [
+  { id: "BOY-001", name: "Atlantic Pioneer", lat: 13.0905, lng: 80.32045, status: "online", temp: 23.1, wave: 1.9, battery: 87 },
+  { id: "BOY-002", name: "Pacific Guardian", lat: 13.1215, lng: 80.35961, status: "warning", temp: 21.8, wave: 2.8, battery: 45 },
+  { id: "BOY-003", name: "Arctic Sentinel", lat: 13.0531, lng: 80.40686, status:  "offline", temp: 18.5, wave: 0.8, battery: 12 },
+  { id: "BOY-004", name: "Gulf Monitor", lat: 13.1096, lng: 80.45072, status: "online", temp: 26.2, wave: 1.5, battery: 91 },
+  { id: "BOY-005", name: "Baltic Watcher", lat: 13.0544, lng: 80.36744, status: "online", temp: 19.7, wave: 1.2, battery: 73 },
+];
+
+
+
+useEffect(() => {
+  if (!mapContainerRef.current) return;
+
+  const map = new maplibregl.Map({
+    container: mapContainerRef.current,
+    style: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
+    center: [80.4134238425889, 13.020807593858753],
+    zoom: 10.5,
+    attributionControl: false,
+    dragPan: false,
+    scrollZoom: false,
+    boxZoom: false,
+    dragRotate: false,
+    keyboard: false,
+    doubleClickZoom: false,
+    touchZoomRotate: false,
+    interactive: false, // completely disables all user interaction
+  });
+
+  return () => map.remove();
+}, []);
+
 
   return (
-    <div className="relative bg-gradient-to-br from-ocean-surface via-primary to-ocean-deep rounded-lg h-96 overflow-hidden">
-      {/* Enhanced ocean background with animated waves */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 opacity-30">
-          <div className="w-full h-full bg-gradient-to-r from-transparent via-wave-light/40 to-transparent animate-pulse"></div>
-        </div>
-      </div>
-      
-      {/* Enhanced buoy markers */}
+    <div className="relative rounded-lg h-96 overflow-hidden">
+      {/* Real map tile background */}
+      <div ref={mapContainerRef} className="absolute inset-0 z-0" />
+
+      {/* Buoy Markers Overlay */}
       {buoys.map((buoy, index) => (
         <div
           key={buoy.id}
-          className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
+          className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-10"
           style={{ 
             left: `${15 + (index * 16)}%`, 
             top: `${25 + (index % 2 === 0 ? 15 : -5)}%` 
           }}
           onClick={() => setSelectedBuoy(selectedBuoy === buoy.id ? null : buoy.id)}
         >
-          <div className="relative">
+          <div className="relative" style={{ position: 'relative', top: '50px' }}>
             <div className={`w-6 h-6 rounded-full border-2 border-white shadow-lg transition-all duration-300 group-hover:scale-125 ${
               buoy.status === 'online' ? 'bg-emerald-500 pulse-glow' :
               buoy.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'
@@ -46,8 +69,8 @@ const EnhancedMap = () => {
                 <div className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-75"></div>
               )}
             </div>
-            
-            {/* Enhanced tooltip */}
+
+            {/* Tooltip */}
             <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-card border border-border rounded-lg p-3 shadow-xl transition-all duration-300 z-10 min-w-48 ${
               selectedBuoy === buoy.id ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
             }`}>
@@ -56,7 +79,7 @@ const EnhancedMap = () => {
                   <p className="text-sm font-semibold text-foreground">{buoy.name}</p>
                   <p className="text-xs text-muted-foreground">{buoy.id}</p>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="flex items-center gap-1">
                     <Thermometer className="h-3 w-3 text-blue-400" />
@@ -72,7 +95,11 @@ const EnhancedMap = () => {
                   </div>
                   <div className="flex items-center gap-1">
                     <Signal className="h-3 w-3 text-purple-400" />
-                    <span className={buoy.status === 'online' ? 'text-emerald-400' : buoy.status === 'warning' ? 'text-yellow-400' : 'text-red-400'}>
+                    <span className={
+                      buoy.status === 'online' ? 'text-emerald-400' :
+                      buoy.status === 'warning' ? 'text-yellow-400' :
+                      'text-red-400'
+                    }>
                       {buoy.status}
                     </span>
                   </div>
@@ -82,9 +109,9 @@ const EnhancedMap = () => {
           </div>
         </div>
       ))}
-      
-      {/* Enhanced map controls */}
-      <div className="absolute top-4 right-4 space-y-2">
+
+      {/* Map controls */}
+      <div className="absolute top-4 right-4 space-y-2 z-10">
         <Button size="sm" variant="marine" className="btn-enhanced">
           <Navigation className="h-4 w-4" />
         </Button>
@@ -92,9 +119,9 @@ const EnhancedMap = () => {
           <Satellite className="h-4 w-4" />
         </Button>
       </div>
-      
-      {/* Enhanced legend */}
-      <div className="absolute bottom-4 left-4 bg-card border border-border rounded-lg p-4 shadow-lg">
+
+      {/* Status legend */}
+      <div className="absolute bottom-4 left-4 bg-card border border-border rounded-lg p-4 shadow-lg z-10">
         <p className="text-sm font-semibold mb-3 text-foreground">Buoy Status</p>
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-3">
@@ -114,6 +141,7 @@ const EnhancedMap = () => {
     </div>
   );
 };
+
 
 export default function BuoyMap() {
   const selectedBuoy = {

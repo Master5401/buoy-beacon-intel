@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/sonner";
+import { Padding } from "maplibre-gl";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -94,7 +95,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           
           <div className="ml-auto flex items-center gap-6">
             {/* Gamification Stats */}
-            <div className="hidden lg:flex items-center gap-4 px-4 py-2 bg-slate-700/50 rounded-lg">
+            {/* <div className="hidden lg:flex items-center gap-4 px-4 py-2 bg-slate-700/50 rounded-lg">
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-yellow-400" />
                 <span className="text-sm text-white font-medium">Level {userStats.level}</span>
@@ -103,7 +104,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Progress value={(userStats.xp / userStats.maxXp) * 100} className="h-2" />
               </div>
               <span className="text-xs text-slate-300">{userStats.xp}/{userStats.maxXp} XP</span>
-            </div>
+            </div> */}
 
             {/* Achievements */}
             <Button 
@@ -117,10 +118,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 });
               }}
             >
-              <Trophy className="h-5 w-5" />
+              {/* <Trophy className="h-5 w-5" />
               <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs bg-yellow-500 text-black">
                 {userStats.achievements}
-              </Badge>
+              </Badge> */}
             </Button>
 
             {/* System Status */}
