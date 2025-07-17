@@ -2,41 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Marine IoT Dashboard Design System - Ocean themed colors and gradients */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Ocean-inspired color palette */
+    --background: 220 30% 8%;
+    --foreground: 200 50% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 220 25% 12%;
+    --card-foreground: 200 45% 92%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 220 28% 10%;
+    --popover-foreground: 200 50% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Deep ocean blue primary */
+    --primary: 200 80% 45%;
+    --primary-foreground: 220 30% 8%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Seafoam secondary */
+    --secondary: 180 40% 20%;
+    --secondary-foreground: 180 60% 85%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted ocean tones */
+    --muted: 220 20% 18%;
+    --muted-foreground: 200 25% 65%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Aqua accent */
+    --accent: 185 70% 55%;
+    --accent-foreground: 220 30% 8%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Alert colors - coral/warning */
+    --destructive: 5 85% 60%;
+    --destructive-foreground: 200 50% 95%;
+    --warning: 35 90% 60%;
+    --warning-foreground: 220 30% 8%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Borders and inputs */
+    --border: 200 30% 25%;
+    --input: 200 25% 20%;
+    --ring: 200 80% 45%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Marine-specific design tokens */
+    --ocean-deep: 220 40% 6%;
+    --ocean-surface: 200 60% 35%;
+    --wave-light: 185 80% 65%;
+    --foam: 180 40% 85%;
+    --coral: 15 85% 65%;
+    --kelp: 120 30% 35%;
+
+    /* Gradients */
+    --gradient-ocean: linear-gradient(135deg, hsl(var(--ocean-deep)), hsl(var(--primary)));
+    --gradient-wave: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--wave-light)));
+    --gradient-surface: linear-gradient(180deg, hsl(var(--background)), hsl(var(--ocean-surface)));
+
+    /* Shadows with ocean glow */
+    --shadow-ocean: 0 10px 40px -10px hsl(var(--primary) / 0.4);
+    --shadow-wave: 0 0 30px hsl(var(--wave-light) / 0.3);
+
+    /* Animations */
+    --transition-wave: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --animation-float: float 6s ease-in-out infinite;
 
     --sidebar-background: 0 0% 98%;
 
@@ -94,6 +122,8 @@ All colors MUST be HSL.
   }
 }
 
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -101,5 +131,79 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    background: var(--gradient-ocean);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* Wave animation */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(1deg); }
+    75% { transform: rotate(-1deg); }
+  }
+
+  @keyframes ripple {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  /* Component styles */
+  .ocean-card {
+    @apply bg-card/80 backdrop-blur-sm border border-border/50;
+    box-shadow: var(--shadow-ocean);
+  }
+
+  .wave-animation {
+    animation: var(--animation-float);
+  }
+
+  .ripple-effect {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ripple-effect::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: hsl(var(--wave-light) / 0.3);
+    transform: translate(-50%, -50%);
+    animation: ripple 1.5s infinite;
+  }
+
+  /* Status indicators */
+  .status-online {
+    @apply bg-emerald-500;
+    box-shadow: 0 0 10px hsl(142 71% 45% / 0.5);
+  }
+
+  .status-warning {
+    background: hsl(var(--warning));
+    box-shadow: 0 0 10px hsl(var(--warning) / 0.5);
+  }
+
+  .status-offline {
+    @apply bg-destructive;
+    box-shadow: 0 0 10px hsl(var(--destructive) / 0.5);
+  }
+
+  /* Marine themed gradients for charts */
+  .chart-gradient-1 {
+    background: linear-gradient(45deg, hsl(var(--primary)), hsl(var(--wave-light)));
+  }
+
+  .chart-gradient-2 {
+    background: linear-gradient(45deg, hsl(var(--accent)), hsl(var(--foam)));
   }
 }

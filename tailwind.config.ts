@@ -61,7 +61,38 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Marine theme colors
+				ocean: {
+					deep: 'hsl(var(--ocean-deep))',
+					surface: 'hsl(var(--ocean-surface))',
+					DEFAULT: 'hsl(var(--primary))'
+				},
+				wave: {
+					light: 'hsl(var(--wave-light))',
+					DEFAULT: 'hsl(var(--primary))'
+				},
+				foam: 'hsl(var(--foam))',
+				coral: 'hsl(var(--coral))',
+				kelp: 'hsl(var(--kelp))',
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))'
 				}
+			},
+			backgroundImage: {
+				'gradient-ocean': 'var(--gradient-ocean)',
+				'gradient-wave': 'var(--gradient-wave)',
+				'gradient-surface': 'var(--gradient-surface)'
+			},
+			boxShadow: {
+				'ocean': 'var(--shadow-ocean)',
+				'wave': 'var(--shadow-wave)'
+			},
+			animation: {
+				'float': 'float 6s ease-in-out infinite',
+				'wave': 'wave 4s ease-in-out infinite',
+				'ripple': 'ripple 1.5s infinite'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
