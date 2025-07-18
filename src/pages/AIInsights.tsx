@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,14 +44,77 @@ const insights = [
   }
 ];
 
-const predictions = [
-  { metric: "Wave Height", current: "1.8m", predicted: "2.4m", timeframe: "Next 6h", trend: "up" },
-  { metric: "Wind Speed", current: "15.2 km/h", predicted: "22.1 km/h", timeframe: "Next 4h", trend: "up" },
-  { metric: "Temperature", current: "22.5°C", predicted: "21.8°C", timeframe: "Next 12h", trend: "down" },
-  { metric: "System Load", current: "67%", predicted: "45%", timeframe: "Next 2h", trend: "down" },
+const initialPredictions = [
+  { metric: "Wave Height", current: "1.2m", predicted: "2.4m", timeframe: "Next 6h", trend: "up" },
+  { metric: "Wind Speed", current: "11.2 km/h", predicted: "22.1 km/h", timeframe: "Next 4h", trend: "up" },
+  { metric: "Temperature", current: "12.5°C", predicted: "21.8°C", timeframe: "Next 12h", trend: "down" },
+  { metric: "System Load", current: "47%", predicted: "45%", timeframe: "Next 2h", trend: "down" },
 ];
 
 export default function AIInsights() {
+  const [predictions, setPredictions] = useState(initialPredictions);
+
+  useEffect(() => {
+    // Example sensor input data to send to the API
+    const sensorInput = {
+      humidity: 50,
+      pressure: 1013,
+      wind_direction: 180,
+      solar_radiation: 200,
+      prev_wave_height: 1.8,
+      prev_wind_speed: 15.2,
+      prev_temp: 22.5,
+      system_cpu_usage: 67,
+    };
+
+    async function fetchPredictions() {
+      try {
+        const response = await fetch("http://localhost:8000/predict", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(sensorInput),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to fetch predictions");
+        }
+        const data = await response.json();
+
+        const updatedPredictions = predictions.map((pred) => {
+          let newPredicted = pred.predicted;
+          let newTrend = pred.trend;
+
+          if (pred.metric === "Wave Height" && data.wave_height !== undefined) {
+            newPredicted = `${data.wave_height.toFixed(2)}m`;
+            newTrend = data.wave_height > parseFloat(pred.current) ? "up" : "down";
+          } else if (pred.metric === "Wind Speed" && data.wind_speed !== undefined) {
+            newPredicted = `${data.wind_speed.toFixed(2)} km/h`;
+            newTrend = data.wind_speed > parseFloat(pred.current) ? "up" : "down";
+          } else if (pred.metric === "Temperature" && data.temperature !== undefined) {
+            newPredicted = `${data.temperature.toFixed(2)}°C`;
+            newTrend = data.temperature > parseFloat(pred.current) ? "up" : "down";
+          } else if (pred.metric === "System Load" && data.system_load !== undefined) {
+            newPredicted = `${data.system_load.toFixed(0)}%`;
+            newTrend = data.system_load > parseFloat(pred.current) ? "up" : "down";
+          }
+
+          return {
+            ...pred,
+            predicted: newPredicted,
+            trend: newTrend,
+          };
+        });
+
+        setPredictions(updatedPredictions);
+      } catch (error) {
+        console.error("Error fetching predictions:", error);
+      }
+    }
+
+    fetchPredictions();
+  }, []);
+
   const getInsightIcon = (type: string) => {
     switch (type) {
       case "prediction": return TrendingUp;
